@@ -1,2 +1,2 @@
-# MNIST_classifier_from_scratch
+# MNIST_classifier
 The implementation of the MNIST classifier model using only numpy
