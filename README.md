@@ -3,7 +3,7 @@ The implementation of the MNIST classifier model using only numpy
 
 ## Getting started
 
-### Instalation
+### Installation
 This project was built using Python 3.10.12 version. To install the requirements use:
 ```bash
 pip install -r requirements.txt
