@@ -23,8 +23,6 @@ cd ..
 ```
 Default download folder is set to ../mnist but can be changed in a script
 
-&nbsp;
-&nbsp;
 ## Training
 You can train the model with the train.py script:
 ```bash
