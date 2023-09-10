@@ -37,8 +37,7 @@ You can use grid_search for hyperparameters optimization with the grid_seach.py 
 ```bash
 python grid_search.py -num_epoch 8,10 -batch_size 100,200,280 -dropout_rate 0.0,0.25,0.5 -learning_rate 0.1,0.05 -random_state 42
 ```
-<br/>
-<br/>
+
 ## Testing
 You can test the model performances with the test.py script, pretrained weights are also provided in the ModelWeights folder stored as : 
 **[model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state]_best_val_weights.pkl**.
