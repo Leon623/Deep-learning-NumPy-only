@@ -30,6 +30,8 @@ In the Results folder there are training results for different hyperparameters s
 [model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state].png
 &nbsp;
 &nbsp;
+<br/>
+<br/>
 You can test the model performances with the test.py script, pretrained weights are also provided in the ModelWeights folder stored as : [model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state]_best_val_weights.pkl.
 ```bash
 python test.py -data_path mnist -data_path mnist -weights_path ModelWeights/MNIST_classifier_convolution_8_best_val_weights.pkl -random_state 42
