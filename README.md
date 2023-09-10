@@ -40,7 +40,7 @@ python test.py -data_path mnist -data_path mnist -weights_path ModelWeights/MNIS
 &nbsp;
 You can use grid_search for hyperparameters optimization with the grid_seach.py script:
 ```bash
-python grid_search.py -num_epoch 8,10 -batch_size 100,200,280 -dropout_rate 0.0,0.25,0.5 -learning_rate 0.1,0.05 ModelWeights/MNIST_classifier_convolution_8_100_0.1_0.0_42_best_val_weights.pkl -random_state 42
+python grid_search.py -num_epoch 8,10 -batch_size 100,200,280 -dropout_rate 0.0,0.25,0.5 -learning_rate 0.1,0.05 -random_state 42
 ```
 &nbsp;
 &nbsp;
