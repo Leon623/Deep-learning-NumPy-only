@@ -79,23 +79,100 @@ def train_test_split(data, targets, test_size=0.2, random_state=None):
     return X_train, X_test, y_train, y_test
 
 
-def plot_performance(train_accuracies, train_losses, val_accuracies, val_losses):
+def plot_performance(train_accuracies, train_losses, val_accuracies, val_losses, save_name):
+    plt.style.use('ggplot')
     plt.figure(figsize=(12, 5))
     plt.subplot(1, 2, 1)
-    plt.plot(train_accuracies, label='Train Accuracy', marker='o')
-    plt.plot(val_accuracies, label='Validation Accuracy', marker='x')
+
+    # Plot train accuracy and validation accuracy
+    plt.plot(train_accuracies, label='Train Accuracy', marker='o', linestyle='-')
+    plt.plot(val_accuracies, label='Validation Accuracy', marker='x', linestyle='-')
+
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.title('Train and Validation Accuracies Over Epochs')
     plt.legend()
 
+    # Customize grid lines
+    plt.grid(color='gray', linestyle='--', linewidth=0.5)
+
     plt.subplot(1, 2, 2)
-    plt.plot(train_losses, label='Train Loss', marker='o')
-    plt.plot(val_losses, label='Validation Loss', marker='x')
+
+    # Plot train loss and validation loss
+    plt.plot(train_losses, label='Train Loss', marker='o', linestyle='-')
+    plt.plot(val_losses, label='Validation Loss', marker='x', linestyle='-')
+
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.title('Train and Validation Losses Over Epochs')
     plt.legend()
 
+    # Customize grid lines
+    plt.grid(color='gray', linestyle='--', linewidth=0.5)
+
     plt.tight_layout()
-    plt.save_fig("Results/plot_accuracy_losses.png")
+    plt.savefig(f"Results/{save_name}.png")
+
+def plot_wrong_predictions(wrong_predictions, num_examples_per_row=3):
+    num_wrong = len(wrong_predictions)
+    num_rows = (num_wrong + num_examples_per_row - 1) // num_examples_per_row
+
+    fig, axes = plt.subplots(num_rows, num_examples_per_row, figsize=(12, 4 * num_rows))
+
+    for i, (image, predicted, true_label) in enumerate(wrong_predictions):
+        image = np.reshape(image, (28, 28))
+
+        row = i // num_examples_per_row
+        col = i % num_examples_per_row
+        ax = axes[row, col]
+
+        # Display the image
+        ax.imshow(image, cmap='gray')
+        ax.axis('off')
+
+        # Set the title with predicted and true labels
+        ax.set_title(f'Predicted:{predicted}, Label:{true_label}')
+
+    # Remove empty subplots
+    for i in range(len(wrong_predictions), num_rows * num_examples_per_row):
+        row = i // num_examples_per_row
+        col = i % num_examples_per_row
+        fig.delaxes(axes[row, col])
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_class_errors(wrong_predictions, test_labels):
+    # Extract true labels from wrong predictions
+    true_labels = [true_label for _, _, true_label in wrong_predictions]
+
+    # Calculate the number of each label in the test set
+    class_counts = np.bincount(test_labels)
+
+    # Initialize ratios of incorrect predictions to total labels for each class
+    class_error_ratios = np.zeros(len(class_counts))
+
+    # Calculate the ratios for each class
+    for true_label, predicted_label in zip(true_labels, test_labels):
+        if true_label != predicted_label:
+            class_error_ratios[true_label] += 1
+
+    class_error_ratios /= class_counts  # Calculate the ratios
+    class_error_percentages = class_error_ratios * 100  # Convert to percentages
+
+    # Set the ggplot style
+    plt.style.use('ggplot')
+
+    # Create a bar plot for the percentages
+    classes = np.arange(len(class_counts))
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    ax.bar(classes, class_error_percentages, color='#FF6B6B', alpha=0.7)
+
+    ax.set_xlabel("Class")
+    ax.set_ylabel("Incorrect Predictions (%)")
+    ax.set_title("Percentage of Incorrect Predictions by Class")
+    ax.set_xticks(classes)
+
+    plt.show()

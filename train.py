@@ -14,17 +14,18 @@ from utils import one_hot_encode_list
 from utils import plot_performance
 from utils import train_test_split
 
-def main(args):
 
+def main(args):
     # Parsing the arguments
     data_dir = args.data_path
     batch_size = args.batch_size
     lr = args.lr
     num_epochs = args.num_epochs
+    droupout_rate = args.dropout_rate
     random_state = args.random_state
     augentations = args.augmentations
 
-    # Files which ontains data and labels
+    # Files which contains data and labels
     data_path = f'{data_dir}/mnist_data.csv'
     labels_path = f'{data_dir}/mnist_labels.csv'
 
@@ -49,13 +50,17 @@ def main(args):
         transforms = [(Transforms.random_rotation, 0.2)]
         augmentator = Augmentator(transforms=transforms)
 
+    # Ensure that all batches are the same size, this is important for network to work!
+    assert len(train_dataset) % batch_size == len(val_dataset) % batch_size == len(test_dataset) % batch_size == 0
+
     # Creating loaders for the datasets
     train_loader = MNISTDataLoader(train_dataset, batch_size=batch_size, shuffle=True, augmentator=augmentator)
     val_loader = MNISTDataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = MNISTDataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     print(
-        f"Train dataset size: {len(train_dataset)}\nVal dataset size: {len(val_dataset)}\nTest dataset size: {len(test_dataset)}")
+        f"Train dataset size: {len(train_dataset)}\nVal dataset size: {len(val_dataset)}\nTest dataset size: {len(test_dataset)}",
+        flush=True)
 
     # Initializing scheduler
     scheduler = LinearScheduler(initial_lr=lr)
@@ -70,20 +75,25 @@ def main(args):
     # Initializing the model
     model = MNIST_classifier_convolution(inputs)
 
+    # How will the model be saved, for grid search
+    save_name = f"{model.name}_{num_epochs}_{batch_size}_{lr}_{droupout_rate}_{random_state}"
+
     # Training the model
     train_accuracies, train_losses, val_accuracies, val_losses = model.train(loss=loss, num_epochs=num_epochs,
-                                                                           train_loader=train_loader,
-                                                                           scheduler=scheduler,
-                                                                           val_loader=val_loader, optimizer=optimizer)
+                                                                             train_loader=train_loader,
+                                                                             scheduler=scheduler,
+                                                                             val_loader=val_loader, optimizer=optimizer,
+                                                                             save_name=save_name)
 
     # Plotting the performances on the train and validation dataset
-    plot_performance(train_accuracies, train_losses, val_accuracies, val_losses)
+    plot_performance(train_accuracies, train_losses, val_accuracies, val_losses, save_name)
 
     # Loading the weights from the best validation epoch score
-    model.load_parameters(filename="ModelWeights/best_val_accuracy_weights.pkl")
+    model.load_parameters(
+        filename=f"ModelWeights/{save_name}_best_val_weights.pkl")
 
-    # Testing the model
-    accuracy, micro_f1, macro_f1, val_losses = model.test(test_loader=test_loader, loss=loss)
+    # Testing the model on the test set
+    accuracy, micro_f1, macro_f1, val_losses, _ = model.test(test_loader=test_loader, loss=loss)
     print("-----------------------")
     print(f"Test accuracy: {accuracy:.3f}%\nTest micro-f1: {micro_f1:.3f}%\nTest macro-f1: {macro_f1:.3f}%")
 
@@ -93,6 +103,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-batch_size", type=int, default=100,
                         help="Batch size of train, test and val, must be the divider of 49000, 7000, 14000!")
+    parser.add_argument("-dropout_rate", type=float, default=0.0,
+                        help="Droupout rate of last fully connected layer")
     parser.add_argument("-num_epochs", type=int, default=8, help="Number of training epochs")
     parser.add_argument("-random_state", type=int, default=42, help="Random state of the test_val split")
     parser.add_argument("-data_path", type=str, default="mnist",
