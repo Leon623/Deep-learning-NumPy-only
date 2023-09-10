@@ -27,10 +27,12 @@ You can train the model with the train.py script:
 python train.py -data_path mnist -lr 0.1 -batch_size 100 -num_epochs 8 -random_state 42
 ```
 In the Results folder there are training results for different hyperparameters stored as:
-[model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state].png
+**[model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state].png**
 &nbsp;
 &nbsp;
-You can test the model performances with the test.py script, pretrained weights are also provided in the ModelWeights folder stored as : [model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state]_best_val_weights.pkl.
+<br/>
+<br/>
+You can test the model performances with the test.py script, pretrained weights are also provided in the ModelWeights folder stored as : **[model.name]\_[num_epochs]\_[batch_size]\_[lr]\_[droupout_rate]\_[random_state]_best_val_weights.pkl**.
 ```bash
 python test.py -data_path mnist -data_path mnist -weights_path ModelWeights/MNIST_classifier_convolution_8_best_val_weights.pkl -random_state 42
 ```
@@ -42,7 +44,10 @@ python grid_search.py -num_epoch 8,10 -batch_size 100,200,280 -dropout_rate 0.0,
 ```
 &nbsp;
 &nbsp;
+<br/>
 Example for one training, testing and visualization is provided in the Train_test.ipynb jupyter notebook.
+<br/>
+Documentation for every script is available in the Documentation folder
 
 
 
